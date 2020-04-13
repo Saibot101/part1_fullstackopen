@@ -1,146 +1,80 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-
 const App = () => {
-    const course = {
-        name: 'Half Stack application development',
-        parts: [
-            {
-                name: 'Fundamentals of React',
-                exercises: 10
-            },
-            {
-                name: 'Using props to pass data',
-                exercises: 7
-            },
-            {
-                name: 'State of a component',
-                exercises: 14
-            }
-        ]
+    // save clicks of each button to own state
+    const [good, setGood] = useState(0);
+    const [neutral, setNeutral] = useState(0);
+    const [bad, setBad] = useState(0);
+
+    const handleGood = () => {
+        setGood(good+1)
     };
-
-    return (
-
-        <div>
-            <Header course={course.name} />
-            <Content parts={course.parts}  />
-            <Total parts={course.parts} />
-            <Event />
-            <ComplexEvents/>
-        </div>
-    )
-};
-
-const Header = (props) => {
-    return (
-        <div>
-            <h1>{props.course}</h1>
-        </div>
-    )
-};
-
-const Content = (props) =>  {
-    return(
-        <div>
-            <Part name={props.parts[0].name} exercises={props.parts[0].exercises}/>
-            <Part name={props.parts[1].name} exercises={props.parts[1].exercises} />
-            <Part name={props.parts[2].name} exercises={props.parts[2].exercises} />
-        </div>
-    )
-};
-
-const Part = (props) => {
-    return (
-        <div>
-            <p> {props.name} {props.exercises} </p>
-        </div>
-    )
-};
-
-const Total = (props) => {
-    return (
-        <div>
-            <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
-        </div>
-    )
-};
-//------------------------------------------
-
-const Event = (props) => {
-
-    const [counter, setCounter] = useState(0);
-
-    const increasedByOne = () => setCounter(counter +1);
-    const decreasedByOne = () => setCounter(counter -1);
-    const setToZero = () => setCounter(0);
-
-    return (
-        <div>
-            <Display counter={counter}/>
-            <Button handleClick={increasedByOne} text='plus'/>
-            <Button handleClick={setToZero} text='zero'/>
-            <Button handleClick={decreasedByOne} text='minus'/>
-
-        </div>
-    )
-};
-
-const Display = ({ counter }) => <div>{counter}</div>;
-
-const Button = ({ handleClick, text }) => (
-    <button onClick={handleClick}>
-        {text}
-    </button>
-);
-
-//------------------------------------------
-
-const ComplexEvents = () => {
-    const [left, setLeft] = useState(0);
-    const [right, setRight] = useState(0);
-    const [allClicks, setAll] = useState([]);
-
-    const handleLeftClick = () => {
-        setAll(allClicks.concat('L'));
-        setLeft(left + 1)
+    const handleNeutral = () => {
+        setNeutral(neutral+1)
     };
-
-    const handleRightClick = () => {
-        setAll(allClicks.concat('R'));
-        setRight(right + 1)
+    const handleBad = () => {
+        setBad(bad+1)
     };
 
     return (
         <div>
-            <div>
-                {left}
-                <button onClick={handleLeftClick}>left</button>
-                <button onClick={handleRightClick}>right</button>
-                {right}
-                <History allClicks={allClicks}/>
-            </div>
+            <h1>give feedback</h1>
+            <Button handleClick={handleGood} text='good'/>
+            <Button handleClick={handleNeutral} text='neutral'/>
+            <Button handleClick={handleBad} text='bad'/>
+
+            <Statistics good={good} neutral={neutral} bad={bad} />
         </div>
     )
 };
 
-const History = (props) => {
-    if (props.allClicks.length === 0) {
+const Button = ({handleClick, text}) => (<button onClick={handleClick}> {text} </button>);
+
+const Statistics = ({good, neutral, bad}) => {
+    let all = good+neutral+bad;
+    let average = (good-bad)/all;
+    let positive = good/all;
+
+    if (good === 0 && neutral === 0 && bad===0){
         return (
             <div>
-                the app is used by pressing the buttons
+                <p>No feedback given</p>
             </div>
         )
     }
 
-    return (
+    return(
         <div>
-            button press history: {props.allClicks.join(' ')}
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h1>statistics</h1>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <SingleStatistic value={good}/>
+                    <SingleStatistic value={neutral}/>
+                    <SingleStatistic value={bad}/>
+                    <SingleStatistic value={all}/>
+                    <SingleStatistic value={average.toString()}/>
+                    <SingleStatistic value={positive.toString() + ' %'}/>
+                </tbody>
+            </table>
         </div>
     )
 };
 
+const SingleStatistic = ({value}) =>{
+    return (
+        <tr>
+            <td>{value}</td>
+        </tr>
+    )
+};
 
-ReactDOM.render(<App />, document.getElementById('root'));
-
+ReactDOM.render(<App />,
+    document.getElementById('root')
+);
