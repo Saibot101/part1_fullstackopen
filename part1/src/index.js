@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
 
 
@@ -27,6 +27,8 @@ const App = () => {
             <Header course={course.name} />
             <Content parts={course.parts}  />
             <Total parts={course.parts} />
+            <Event />
+            <ComplexEvents/>
         </div>
     )
 };
@@ -64,6 +66,81 @@ const Total = (props) => {
         </div>
     )
 };
+//------------------------------------------
+
+const Event = (props) => {
+
+    const [counter, setCounter] = useState(0);
+
+    const increasedByOne = () => setCounter(counter +1);
+    const decreasedByOne = () => setCounter(counter -1);
+    const setToZero = () => setCounter(0);
+
+    return (
+        <div>
+            <Display counter={counter}/>
+            <Button handleClick={increasedByOne} text='plus'/>
+            <Button handleClick={setToZero} text='zero'/>
+            <Button handleClick={decreasedByOne} text='minus'/>
+
+        </div>
+    )
+};
+
+const Display = ({ counter }) => <div>{counter}</div>;
+
+const Button = ({ handleClick, text }) => (
+    <button onClick={handleClick}>
+        {text}
+    </button>
+);
+
+//------------------------------------------
+
+const ComplexEvents = () => {
+    const [left, setLeft] = useState(0);
+    const [right, setRight] = useState(0);
+    const [allClicks, setAll] = useState([]);
+
+    const handleLeftClick = () => {
+        setAll(allClicks.concat('L'));
+        setLeft(left + 1)
+    };
+
+    const handleRightClick = () => {
+        setAll(allClicks.concat('R'));
+        setRight(right + 1)
+    };
+
+    return (
+        <div>
+            <div>
+                {left}
+                <button onClick={handleLeftClick}>left</button>
+                <button onClick={handleRightClick}>right</button>
+                {right}
+                <History allClicks={allClicks}/>
+            </div>
+        </div>
+    )
+};
+
+const History = (props) => {
+    if (props.allClicks.length === 0) {
+        return (
+            <div>
+                the app is used by pressing the buttons
+            </div>
+        )
+    }
+
+    return (
+        <div>
+            button press history: {props.allClicks.join(' ')}
+        </div>
+    )
+};
+
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
